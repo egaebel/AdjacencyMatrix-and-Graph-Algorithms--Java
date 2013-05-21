@@ -10,7 +10,7 @@ import ds.Graph.Graph;
  *
  * @param <T>
  */
-public interface AdjacencyMatrixInterface<T, E> extends Graph<T> {
+public interface AdjacencyMatrixInterface<T, E extends Edge> extends Graph<T> {
 
     //~Methods-------------------------------------------------
     @Override
