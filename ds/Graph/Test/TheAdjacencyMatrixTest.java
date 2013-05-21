@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 import ds.TheAdjacencyMatrix.AdjacencyMatrix;
 import ds.TheAdjacencyMatrix.AdjacencyMatrixInterface;
+import ds.TheAdjacencyMatrix.IntEdge;
 
 public class TheAdjacencyMatrixTest extends TestCase {
 
@@ -29,7 +30,7 @@ public class TheAdjacencyMatrixTest extends TestCase {
         
         System.out.println("TEST ADD VERTEX NUMBER-----------------------------");
         
-        AdjacencyMatrixInterface<String> matrix = new AdjacencyMatrix<String>(false);
+        AdjacencyMatrixInterface<String, IntEdge> matrix = new AdjacencyMatrix<String, IntEdge>(false);
         
         assertEquals(matrix.addVertex("alphabetical"), 0);
         assertEquals(matrix.addVertex("maniacal"), 1);
@@ -51,7 +52,7 @@ public class TheAdjacencyMatrixTest extends TestCase {
     public void testRemoveVertexObject() {
         
         System.out.println("TEST REMOVE VERTEX OBJECT--------------------------");
-        AdjacencyMatrixInterface<String> matrix = new AdjacencyMatrix<String>(false);
+        AdjacencyMatrixInterface<String, IntEdge> matrix = new AdjacencyMatrix<String, IntEdge>(false);
         
         matrix.addVertex("alphabetical");
         matrix.addVertex("maniacal");
@@ -87,7 +88,7 @@ public class TheAdjacencyMatrixTest extends TestCase {
     public void testRemoveVertexNumber() {
         
         System.out.println("TEST REMOVE VERTEX NUMBER--------------------------");
-        AdjacencyMatrixInterface<String> matrix = new AdjacencyMatrix<String>(false);
+        AdjacencyMatrixInterface<String, IntEdge> matrix = new AdjacencyMatrix<String, IntEdge>(false);
         
         matrix.addVertex("alphabetical");
         matrix.addVertex("maniacal");
@@ -131,7 +132,7 @@ public class TheAdjacencyMatrixTest extends TestCase {
     public void testPopVertexObject() {
         
         System.out.println("TEST REMOVE VERTEX OBJECT--------------------------");
-        AdjacencyMatrixInterface<String> matrix = new AdjacencyMatrix<String>(false);
+        AdjacencyMatrixInterface<String, IntEdge> matrix = new AdjacencyMatrix<String, IntEdge>(false);
         
         matrix.addVertex("alphabetical");
         matrix.addVertex("maniacal");
@@ -161,7 +162,7 @@ public class TheAdjacencyMatrixTest extends TestCase {
     public void testAddEdgeObjects() {
         
         System.out.println("TEST REMOVE VERTEX OBJECT--------------------------");
-        AdjacencyMatrixInterface<String> matrix = new AdjacencyMatrix<String>(false);
+        AdjacencyMatrixInterface<String, IntEdge> matrix = new AdjacencyMatrix<String, IntEdge>(false);
         
         matrix.addVertex("alphabetical");
         matrix.addVertex("maniacal");
@@ -213,7 +214,7 @@ public class TheAdjacencyMatrixTest extends TestCase {
     public void testAddEdgeNumber() {
         
         System.out.println("TEST REMOVE VERTEX OBJECT--------------------------");
-        AdjacencyMatrixInterface<String> matrix = new AdjacencyMatrix<String>(false);
+        AdjacencyMatrixInterface<String, IntEdge> matrix = new AdjacencyMatrix<String, IntEdge>(false);
         
         matrix.addVertex("alphabetical");
         matrix.addVertex("maniacal");
@@ -249,7 +250,7 @@ public class TheAdjacencyMatrixTest extends TestCase {
     public void testRemoveEdgeElement() {
         
         System.out.println("TEST REMOVE VERTEX OBJECT--------------------------");
-        AdjacencyMatrixInterface<String> matrix = new AdjacencyMatrix<String>(false);
+        AdjacencyMatrixInterface<String, IntEdge> matrix = new AdjacencyMatrix<String, IntEdge>(false);
         
         matrix.addVertex("alphabetical");
         matrix.addVertex("maniacal");
@@ -289,7 +290,7 @@ public class TheAdjacencyMatrixTest extends TestCase {
     public void testMakeCopy() {
         
         System.out.println("TEST MAKE COPY--------------------------");
-        AdjacencyMatrixInterface<String> matrix = new AdjacencyMatrix<String>(false);
+        AdjacencyMatrixInterface<String, IntEdge> matrix = new AdjacencyMatrix<String, IntEdge>(false);
         
         matrix.addVertex("alphabetical");
         matrix.addVertex("maniacal");
@@ -300,7 +301,7 @@ public class TheAdjacencyMatrixTest extends TestCase {
         matrix.addVertex("grasped");
         matrix.addVertex("hashed");
         
-        AdjacencyMatrixInterface<String> copy = matrix.makeCopy();
+        AdjacencyMatrixInterface<String, IntEdge> copy = matrix.makeCopy();
         
         assertEquals(matrix.printEdges(), copy.printEdges());
         assertEquals(matrix.printVertices(), copy.printVertices());
@@ -310,7 +311,7 @@ public class TheAdjacencyMatrixTest extends TestCase {
     public void testGetEdgesTo() {
         
         System.out.println("TEST GET EDGES TO (UNDIRECTED)");
-        AdjacencyMatrixInterface<String> matrix = new AdjacencyMatrix<String>(false);
+        AdjacencyMatrixInterface<String, IntEdge> matrix = new AdjacencyMatrix<String, IntEdge>(false);
         
         matrix.addVertex("alphabetical");
         matrix.addVertex("maniacal");
@@ -345,7 +346,7 @@ public class TheAdjacencyMatrixTest extends TestCase {
         //----------------------------------------------------
         
         System.out.println("TEST GET EDGES TO (DIRECTED)");
-        matrix = new AdjacencyMatrix<String>(true);
+        matrix = new AdjacencyMatrix<String, IntEdge>(true);
         
         matrix.addVertex("alphabetical");
         matrix.addVertex("maniacal");
@@ -379,7 +380,7 @@ public class TheAdjacencyMatrixTest extends TestCase {
     public void testGetEdgesFrom() {
         
         System.out.println("TEST GET EDGES FROM (UNDIRECTED)");
-        AdjacencyMatrixInterface<String> matrix = new AdjacencyMatrix<String>(false);
+        AdjacencyMatrixInterface<String, IntEdge> matrix = new AdjacencyMatrix<String, IntEdge>(false);
         
         matrix.addVertex("alphabetical");
         matrix.addVertex("maniacal");
@@ -414,7 +415,7 @@ public class TheAdjacencyMatrixTest extends TestCase {
         //----------------------------------------------------
         
         System.out.println("TEST GET EDGES FROM (DIRECTED)");
-        matrix = new AdjacencyMatrix<String>(true);
+        matrix = new AdjacencyMatrix<String, IntEdge>(true);
         
         matrix.addVertex("alphabetical");
         matrix.addVertex("maniacal");

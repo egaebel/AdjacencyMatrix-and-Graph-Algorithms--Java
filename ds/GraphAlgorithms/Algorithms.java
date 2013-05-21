@@ -1,5 +1,6 @@
 package ds.GraphAlgorithms;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -8,6 +9,10 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 import ds.Graph.Graph;
+import ds.TheAdjacencyMatrix.AdjacencyMatrix;
+import ds.TheAdjacencyMatrix.Edge;
+import ds.TheHeap.PriorityQueue;
+import ds.Tuple.ComparableTuple;
 
 /**
  * Algorithms class with methods which take a Graph interface 
@@ -27,7 +32,7 @@ import ds.Graph.Graph;
  * @author Ethan Gaebel (egaebel)
  *
  */
-public class Algorithms<T> {
+public class Algorithms<T, E extends Edge> {
 
     //~Constants----------------------------------------------
 
@@ -39,6 +44,60 @@ public class Algorithms<T> {
 
 
     //~Methods-------------------------------------------------
+    /**
+     * Takes in a (complete) AdjacencyMatrix<T> graph and returns a graph that
+     * makes up the minimum spanning tree of Graph g. Using an
+     * implementation of Prim's Algorithm.
+     *  
+     * @param g the graph to make a minimum spanning tree of.
+     * @return the minimum spanning tree of g. Returns null if g is directed
+     */
+    public Graph<T> primMinSpanTree(AdjacencyMatrix<T, E> g) {
+    
+        if (!g.isDirected()) {
+            AdjacencyMatrix<T, E> t = new AdjacencyMatrix<T, E>(g.size());
+            PriorityQueue<ComparableTuple<Integer>> q = new PriorityQueue<ComparableTuple<Integer>>();
+            ComparableTuple<Integer> e;
+            
+            //copy over vertices
+            for (int i = 0; i < g.size(); i++) {
+                t.addVertex(g.getVertex(i));
+            }
+            
+            for (int i = 0; i < t.size(); i++) {
+                
+                for (int j = i; j < t.size(); j++) {
+                    
+                    q.enqueue(new ComparableTuple<Integer>((Comparator<ComparableTuple<Integer>>)new EdgeWeightComparator<ComparableTuple<Integer>>(), i, j, g.getEdge(i, j)));
+                }
+                e = q.dequeue();
+                t.addEdge(e.getN(0), e.getN(1), e.getN(2));
+                t.addEdge(e.getN(1), e.getN(0), e.getN(2));
+            }
+            
+            return t;
+        }
+        
+        return null;
+    }
+    
+    /**
+     * Takes in a (complete) AdjacencyList<T> graph and returns a graph that
+     * makes up the minimum spanning tree of Graph g. Using an
+     * implementation of Prim's Algorithm.
+     *  
+     * @param g the graph to make a minimum spanning tree of.
+     * @return the minimum spanning tree of g.
+     */
+    public Graph<T> primMinSpanTree(/*AdjacencyList<T> g*/) {
+    
+        Graph<T> t = new AdjacencyMatrix<T, E>();
+        
+        
+        
+        return t;
+    }
+    
     /**
      * Depth first search method that takes a starting element, goal element, and graph and finds a path
      * between the start and goal elements.

@@ -2,6 +2,7 @@ package ds.TheAdjacencyMatrix;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 import ds.Graph.Graph;
 
 /**
@@ -13,20 +14,26 @@ import ds.Graph.Graph;
  * @author Ethan Gaebel (egaebel)
  *
  * @param <T>
+ * @param <E extends Edge>
  */
-public class AdjacencyMatrix<T> implements AdjacencyMatrixInterface<T>, Graph<T> {
+public class AdjacencyMatrix<T, E extends Edge> 
+        implements AdjacencyMatrixInterface<T, E>, Graph<T> {
 
     //~Constants----------------------------------------------
-    
-    private final int DEFAULT_SIZE = 10;
+    private static final int DEFAULT_SIZE = 10;
 
     //~Data Fields--------------------------------------------
     /**
      * Int matrix that holds edge weights in weighted graphs. 
      * A 1 in a directed graph indicates an edge, a 0 indicates no edge.
      */
-    private int[][] matrix;
+    private Object[][] matrix;
 
+    /**
+     * One object that represents all of the empty (0 weight) edges in the graph.
+     */
+    private EmptyEdge empty;
+    
     /**
      * Array of elements contained in the graph.
      * Elements correspond to the same indices as they do in the adjacency matrix of edges.
@@ -56,14 +63,9 @@ public class AdjacencyMatrix<T> implements AdjacencyMatrixInterface<T>, Graph<T>
      * Initializes the adjacency matrix to a size of 10.
      * Which means there are 10 vertices in the graph.
      */
-    @SuppressWarnings("unchecked")
     public AdjacencyMatrix() {
        
-        matrix = new int[DEFAULT_SIZE][DEFAULT_SIZE];
-        elements = (T[]) new Object[DEFAULT_SIZE];
-        
-        size = DEFAULT_SIZE;
-        numVertices = 0;
+        this(DEFAULT_SIZE);
     }
     
     /**
@@ -86,11 +88,22 @@ public class AdjacencyMatrix<T> implements AdjacencyMatrixInterface<T>, Graph<T>
     @SuppressWarnings("unchecked")
     public AdjacencyMatrix(int size) {
         
-        matrix = new int[size][size];
         elements = (T[]) new Object[size];
+        matrix = new Object[size][size];
         
         this.size = size;
         numVertices = 0;
+        directed = false;
+        
+        empty = new EmptyEdge();
+        
+        for (int i = 0; i < size; i++) {
+            
+            for (int j = 0; j < size; j++) {
+                
+                matrix[i][j] = empty;
+            }
+        }
     }
     
     /**
@@ -107,10 +120,37 @@ public class AdjacencyMatrix<T> implements AdjacencyMatrixInterface<T>, Graph<T>
     }
 
     //~Methods-------------------------------------------------
-    @Override
-    public AdjacencyMatrixInterface<T> makeCopy() {
+    /**
+     * Totally randomizes the graph
+     */
+    public void makeGraphRandom() {
         
-        AdjacencyMatrix<T> copy = new AdjacencyMatrix<T>(directed);
+        Random rand = new Random();
+        int weight;
+        
+        for (int i = 0; i < size; i++) {
+            
+            for (int j = 0; j < size; j++) {
+                
+                weight = rand.nextInt();
+                if (weight < 0) {
+                    weight = 0;
+                }
+                
+                ((Edge) matrix[i][j]).setWeight(weight);
+                
+                if (!directed) {
+                    
+                    ((Edge) matrix[j][i]).setWeight(weight);
+                }
+            }
+        }
+    }
+    
+    @Override
+    public AdjacencyMatrixInterface<T, E> makeCopy() {
+        
+        AdjacencyMatrix<T, E> copy = new AdjacencyMatrix<T, E>(directed);
         
         //copy vertices
         for(int i = 0; i < size; i++) {
@@ -123,7 +163,7 @@ public class AdjacencyMatrix<T> implements AdjacencyMatrixInterface<T>, Graph<T>
             
             for (int j = 0; j < size; j++) {
                 
-                copy.addEdge(i, j, matrix[i][j]);
+                copy.addEdge(i, j, (E) matrix[i][j]);
             }
         }
         
@@ -156,7 +196,7 @@ public class AdjacencyMatrix<T> implements AdjacencyMatrixInterface<T>, Graph<T>
         
         size *= 2;
         T[] temp = (T[]) new Object[size];
-        int[][] matrixTemp = new int[size][size];
+        Object[][] matrixTemp = new Object[size][size];
         
         for (int i = 0; i < elements.length; i++) {
         
@@ -164,9 +204,12 @@ public class AdjacencyMatrix<T> implements AdjacencyMatrixInterface<T>, Graph<T>
             
             for (int j = 0; i < elements.length; j++) {
              
-                matrixTemp[i][j] = matrix[i][j];
+                matrixTemp[i][j] = (Edge) matrix[i][j];
             }
         }
+        
+        elements = temp;
+        matrix = matrixTemp;
     }
 
     @Override
@@ -238,8 +281,8 @@ public class AdjacencyMatrix<T> implements AdjacencyMatrixInterface<T>, Graph<T>
             //set rows and columns of index to 0
             for (int i = 0; i < size; i++) {
                 
-                matrix[index][i] = 0;
-                matrix[i][index] = 0;
+                matrix[index][i] = empty;
+                matrix[i][index] = empty;
             }
             
             numVertices--;
@@ -281,8 +324,8 @@ public class AdjacencyMatrix<T> implements AdjacencyMatrixInterface<T>, Graph<T>
             //set rows and columns of index to 0
             for (int i = 0; i < size; i++) {
                 
-                matrix[index][i] = 0;
-                matrix[i][index] = 0;
+                matrix[index][i] = empty;
+                matrix[i][index] = empty;
             }
             
             numVertices--;
@@ -378,11 +421,45 @@ public class AdjacencyMatrix<T> implements AdjacencyMatrixInterface<T>, Graph<T>
         
         if (index1 > -1 && index2 > -1 
                 && index1 < size && index2 < size
-                && matrix[index1][index2] == 0) {
+                && ((Edge) matrix[index1][index2]).getWeight() == 0) {
+
+            Edge newEdge = new IntEdge(weight);
+            matrix[index1][index2] = newEdge;
             
-            matrix[index1][index2] = weight;
             if (!directed) {
-                matrix[index2][index1] = weight;    
+                matrix[index2][index1] = newEdge;    
+            }
+            
+            return true;
+        }
+        
+        return false;
+    }
+    
+    @Override
+    public boolean addEdge(T element1, T element2, E edge) {
+        
+        int index1 = findVertex(element1);
+        int index2 = findVertex(element2);
+        
+        if (index1 != -1 && index2 != -1 && edge != null) {
+        
+            return addEdge(index1, index2, edge);
+        }
+        
+        return false;
+    }
+    
+    @Override
+    public boolean addEdge(int index1, int index2, E edge) {
+        
+        if (index1 > -1 && index1 < size 
+                && index2 > -1 && index2 < size && edge != null) {
+            
+            matrix[index1][index2] = edge;
+            
+            if (!directed) {
+                matrix[index2][index1] = edge;
             }
             
             return true;
@@ -391,6 +468,26 @@ public class AdjacencyMatrix<T> implements AdjacencyMatrixInterface<T>, Graph<T>
         return false;
     }
 
+    /**
+     * Gets the edge weight of the edge going from the vertex
+     * numbered by fromVertex, to the vertex numbered by toVertex.
+     * 
+     * @param fromVertex the vertex number that the edge goes from.
+     * @param toVertex the vertex number that the edge goes to.
+     * @return the weight of the edge. -1 if invalid parameters are passed,
+     *          however edge weights COULD also be -1.....
+     */
+    public int getEdge(int fromVertex, int toVertex) {
+        
+        if (fromVertex > -1 && toVertex > -1 
+                && fromVertex < size && toVertex < size) {
+            
+            return ((Edge) matrix[fromVertex][toVertex]).getWeight();
+        }
+        
+        return -1;
+    }
+    
     @Override
     public List<T> getEdgesTo(T element) {
 
@@ -406,7 +503,7 @@ public class AdjacencyMatrix<T> implements AdjacencyMatrixInterface<T>, Graph<T>
             for (int i = 0; i < size; i++) {
                 
                 //if the edge HAS a weight
-                if (matrix[index][i] != 0) { 
+                if (((Edge) matrix[index][i]).getWeight() != 0) { 
                  
                     edges.add(elements[i]);
                 }
@@ -430,7 +527,7 @@ public class AdjacencyMatrix<T> implements AdjacencyMatrixInterface<T>, Graph<T>
             for (int i = 0; i < size; i++) {
                 
                 //if the edge HAS a weight
-                if (matrix[i][index] != 0) { 
+                if (((Edge) matrix[i][index]).getWeight() != 0) { 
                  
                     edges.add(elements[i]);
                 }
@@ -465,12 +562,14 @@ public class AdjacencyMatrix<T> implements AdjacencyMatrixInterface<T>, Graph<T>
      */
     public boolean removeEdge(int index1, int index2) {
         
-        if (matrix[index1][index2] != 0 && index1 > -1 && index1 < size && index2 > -1 && index2 < size) {
+        if (((Edge) matrix[index1][index2]).getWeight() != 0 
+                && index1 > -1 && index1 < size && index2 > -1 
+                && index2 < size) {
             
-            matrix[index1][index2] = 0;
+            matrix[index1][index2] = empty; 
             
             if (!directed) {
-                matrix[index2][index1] = 0;
+                matrix[index2][index1] = empty;
             }
                     
             return true;
@@ -515,12 +614,12 @@ public class AdjacencyMatrix<T> implements AdjacencyMatrixInterface<T>, Graph<T>
         
         if ((index1 > -1 && index1 < size) && (index2 > -1 && index2 < size)) {
 
-            int weight = matrix[index1][index2];
+            int weight = ((Edge) matrix[index1][index2]).getWeight();
             
-            matrix[index1][index2] = 0;
+            matrix[index1][index2] = empty;
             
             if (!directed) {
-                matrix[index2][index1] = 0;
+                matrix[index2][index1] = empty;
             }
                     
             return weight;

@@ -10,7 +10,7 @@ import ds.Graph.Graph;
  *
  * @param <T>
  */
-public interface AdjacencyMatrixInterface<T> extends Graph<T> {
+public interface AdjacencyMatrixInterface<T, E> extends Graph<T> {
 
     //~Methods-------------------------------------------------
     @Override
@@ -85,6 +85,26 @@ public interface AdjacencyMatrixInterface<T> extends Graph<T> {
      * @return true if an edge doesn't exist, false otherwise.
      */
     public boolean addEdge(int index1, int index2, int weight);
+    /**
+     * Adds an the Edge, edge, between element1 and element2.
+     * 
+     * @param element1 the element the edge goes from.
+     * @param element2 the element the edge goes to.
+     * @param edge the Edge object between the elements.
+     * @return true if element1 and element2 are successful and edge != null, 
+     *          false otherwise.
+     */
+    public boolean addEdge(T element1, T element2, E edge);
+    /**
+     * Adds the Edge edge to the adjacency matrix at index1, index2.
+     * 
+     * @param index1 the index of the from vertex.
+     * @param index2 the index of the to vertex.
+     * @param edge the Edge object to add to the matrix.
+     * @return true if successful, false if index1 or index2 is out of bounds
+     *          or if edge == null
+     */
+    public boolean addEdge(int index1, int index2, E edge);
     @Override
     public boolean removeEdge(T element1, T element2);
     /**
@@ -118,7 +138,7 @@ public interface AdjacencyMatrixInterface<T> extends Graph<T> {
      */
     public int popEdge(int index1, int index2);
     @Override
-    public AdjacencyMatrixInterface<T> makeCopy();
+    public AdjacencyMatrixInterface<T, E> makeCopy();
     @Override
     public boolean isDirected();
     @Override

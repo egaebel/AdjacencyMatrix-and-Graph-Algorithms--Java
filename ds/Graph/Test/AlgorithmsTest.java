@@ -6,15 +6,41 @@ import org.junit.Test;
 import ds.Graph.Graph;
 import ds.GraphAlgorithms.Algorithms;
 import ds.TheAdjacencyMatrix.AdjacencyMatrix;
+import ds.TheAdjacencyMatrix.IntEdge;
 
 
 public class AlgorithmsTest {
 
     @Test
+    public void primsTest() {
+        
+        System.out.println("PRIMS TEST");
+        AdjacencyMatrix<String, IntEdge> g = new AdjacencyMatrix<String, IntEdge>();
+        
+        g.addVertex("magician");
+        g.addVertex("stuck");
+        g.addVertex("buck");
+        g.addVertex("muck");
+        g.addVertex("struck");
+        g.addVertex("block");
+        
+        System.out.println(g.printEdges());
+        System.out.println("Randomizing edges");
+        g.makeGraphRandom();
+        System.out.println(g.printEdges());
+        System.out.println("Randomized!");
+        
+        Algorithms<String, IntEdge> a = new Algorithms<String, IntEdge>();
+        
+        Graph<String> t = a.primMinSpanTree(g);
+        System.out.println(t.printEdges());
+    }
+    
+    @Test
     public void dfsTest() {
 
         System.out.println("DFS TEST");
-        Graph<String> g = new AdjacencyMatrix<String>();
+        Graph<String> g = new AdjacencyMatrix<String, IntEdge>();
         
         g.addVertex("magician");
         g.addVertex("stuck");
@@ -34,7 +60,7 @@ public class AlgorithmsTest {
         g.addEdge("block", "buck");
         g.addEdge("buck", "magician");
         
-        Algorithms<String> a = new Algorithms<String>();
+        Algorithms<String, IntEdge> a = new Algorithms<String, IntEdge>();
         
         List<String> list = a.dfs(g, "magician", "block");
         
@@ -45,7 +71,7 @@ public class AlgorithmsTest {
     public void bfsTest() {
         
         System.out.println("BFS TEST");
-        Graph<String> g = new AdjacencyMatrix<String>();
+        Graph<String> g = new AdjacencyMatrix<String, IntEdge>();
         
         g.addVertex("magician");
         g.addVertex("stuck");
@@ -65,7 +91,7 @@ public class AlgorithmsTest {
         g.addEdge("block", "buck");
         g.addEdge("buck", "magician");
         
-        Algorithms<String> a = new Algorithms<String>();
+        Algorithms<String, IntEdge> a = new Algorithms<String, IntEdge>();
         
         List<String> list = a.bfs(g, "magician", "block");
         
@@ -76,7 +102,7 @@ public class AlgorithmsTest {
     public void topoSortTest() {
         
         System.out.println("TOPO SORT TEST!");
-        Graph<String> g = new AdjacencyMatrix<String>(true);
+        Graph<String> g = new AdjacencyMatrix<String, IntEdge>(true);
         
         g.addVertex("magician");
         g.addVertex("stuck");
@@ -95,7 +121,7 @@ public class AlgorithmsTest {
         //g.addEdge("struck", "magician");
         //g.addEdge("buck", "magician");
         
-        Algorithms<String> a = new Algorithms<String>();
+        Algorithms<String, IntEdge> a = new Algorithms<String, IntEdge>();
 
         List<String> list = a.topoSort(g);
         
@@ -107,9 +133,9 @@ public class AlgorithmsTest {
         assertNull(a.topoSort(g));
         
         System.out.println("TOPO SORT TEST WITH DISJOINT GRAPH");
-        Graph<Integer> ig = new AdjacencyMatrix<Integer>(true);
+        Graph<Integer> ig = new AdjacencyMatrix<Integer, IntEdge>(true);
         
-        Algorithms<Integer> ia = new Algorithms<Integer>();
+        Algorithms<Integer, IntEdge> ia = new Algorithms<Integer, IntEdge>();
         
         ig.addVertex(0);
         ig.addVertex(1);
